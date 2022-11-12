@@ -9,7 +9,7 @@ const getRequestData = () => {
         if (res.ok) {
             return res.json()
         }
-        return Promise.reject(`Произошла ошибка, код ошибки: ${res.status}. Прчина: ${res.statusText}`)
+        return Promise.reject(`Произошла ошибка, код ошибки: ${res.status}. Причина: ${res.statusText}`)
     }
 }
 
