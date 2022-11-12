@@ -1,83 +1,57 @@
 import PopupWithForm from "./PopupWithForm";
 import React from "react";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
+import useInput from "../hooks/useInput";
 
 function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
-    const [name, setName] = React.useState('');
-    const [description, setDescription] = React.useState('');
-    const [inputNameDirty, setInputNameDirty] = React.useState(false);
-    const [inputDescriptionDirty, setInputDescriptionDirty] = React.useState(false);
-    const [inputNameError, setInputNameError] = React.useState('');
-    const [inputDescriptionError, setInputDescriptionError] = React.useState('');
+    const name = useInput()
+    const description = useInput();
     const [formValid, setFormValid] = React.useState(false);
     const currentUser = React.useContext(CurrentUserContext);
+    const inputNameClassName = (`popup__item popup__item_input_name ${name.isDirty ? 'popup__item_type_error' : ''}`);
+    const inputDescriptionClassName = (`popup__item popup__item_input_job ${description.isDirty ? 'popup__item_type_error' : ''}`);
+    const inputNameMessageErrorClassName = (`popup__input-error inputName-error ${name.isDirty ? 'popup__input-error_active' : ''}`);
+    const inputDescriptionMessageErrorClassName = (`popup__input-error inputJob-error ${description.isDirty ? 'popup__input-error_active' : ''}`);
     const buttonText = isLoading ? 'Сохранение...' : 'Сохранить';
-    const inputNameClassName = (`popup__item popup__item_input_name ${inputNameDirty ? 'popup__item_type_error' : ''}`);
-    const inputDescriptionClassName = (`popup__item popup__item_input_job ${inputDescriptionDirty ? 'popup__item_type_error' : ''}`);
-    const inputNameMessageErrorClassName = (`popup__input-error inputName-error ${inputNameDirty ? 'popup__input-error_active' : ''}`);
-    const inputDescriptionMessageErrorClassName = (`popup__input-error inputJob-error ${inputDescriptionDirty ? 'popup__input-error_active' : ''}`);
 
     React.useEffect(() => {
-        setName(currentUser.name);
-        setDescription(currentUser.about);
-        setInputNameDirty(false);
-        setInputNameError('');
-        setInputDescriptionDirty(false);
-        setInputDescriptionError('');
+        name.setValue(currentUser.name);
+        description.setValue(currentUser.about);
+        name.setIsDirty(false);
+        description.setIsDirty(false);
+        name.setInputError('');
+        description.setInputError('');
+        name.setInputValid(true);
+        description.setInputValid(true);
+        setFormValid(true)
     }, [currentUser, isOpen]);
 
     React.useEffect(() => {
-        if (inputNameError || inputDescriptionError) {
-            setFormValid(false)
-        } else {
+        if (name.inputValid && description.inputValid) {
             setFormValid(true)
-        }
-    }, [inputNameError, inputDescriptionError])
-
-    function handleNameChange(evt) {
-        const nameInput = evt.target;
-        setName(nameInput.value);
-
-        if (!nameInput.validity.valid) {
-            setInputNameDirty(true);
-            setInputNameError(nameInput.validationMessage)
         } else {
-            setInputNameDirty(false);
-            setInputNameError('');
+            setFormValid(false)
         }
-    }
-
-    function handleDescriptionChange(evt) {
-        const descriptionInput = evt.target;
-        setDescription(descriptionInput.value);
-
-        if (!descriptionInput.validity.valid) {
-            setInputDescriptionDirty(true);
-            setInputDescriptionError(descriptionInput.validationMessage)
-        } else {
-            setInputDescriptionDirty(false);
-            setInputDescriptionError('');
-        }
-    }
+    }, [name.inputValid, description.inputValid])
 
     function handleSubmit(evt) {
         evt.preventDefault();
         onUpdateUser({
-            name: name,
-            about: description})
+            name: name.value,
+            about: description.value})
     }
 
     return (
         <PopupWithForm name='editProfile' title='Редактировать профиль' buttonText={buttonText} isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} isFormValid={formValid}> {/* попап редактирования профиля */}
             <label htmlFor="inputName">
-                <input onChange={handleNameChange} value={name || ''} type="text" name="name" className={inputNameClassName} autoComplete="off"
+                <input onChange={name.handleChange} value={name.value || ''} type="text" name="name" className={inputNameClassName} autoComplete="off"
                        id="inputName" placeholder="Имя" minLength="2" maxLength="40" required/>
-                <span className={inputNameMessageErrorClassName}>{inputNameError}</span>
+                <span className={inputNameMessageErrorClassName}>{name.inputError}</span>
             </label>
             <label htmlFor="inputJob">
-                <input onChange={handleDescriptionChange} value={description || ''} type="text" name="about" className={inputDescriptionClassName} autoComplete="off"
+                <input onChange={description.handleChange} value={description.value || ''} type="text" name="about" className={inputDescriptionClassName} autoComplete="off"
                        id="inputJob" placeholder="О себе" minLength="2" maxLength="200" required/>
-                <span className={inputDescriptionMessageErrorClassName}>{inputDescriptionError}</span>
+                <span className={inputDescriptionMessageErrorClassName}>{description.inputError}</span>
             </label>
         </PopupWithForm>
     )

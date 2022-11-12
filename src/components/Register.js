@@ -1,13 +1,16 @@
 import React from "react";
-import UserForm from "./UserForm";
+import AuthorizationUserForm from "./AuthorizationUserForm";
+import Header from "./Header";
+import {useHistory} from "react-router-dom";
 
-function Register() {
-    function handleSubmit() {
-        console.log('handleSubmit')
-    }
+function Register({onRegister, isLoggedIn}) {
+    let history = useHistory();
 
     return (
-        <UserForm onSubmit={handleSubmit} name='register' title='Регистрация' buttonText='Зарегистрироваться' />
+        <>
+            <Header buttonPath={() => history.push('/sign-in')} loginText='' buttonText='Войти' additionalClassName='' loggedIn={isLoggedIn}/>
+            <AuthorizationUserForm onSubmit={onRegister} name='register' title='Регистрация' buttonText='Зарегистрироваться' />
+        </>
     )
 
 }

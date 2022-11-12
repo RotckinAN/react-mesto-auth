@@ -4,4 +4,10 @@
     color: #FFFFFF;
     margin: 0 auto;
     padding-top: 15px;
+    text-decoration: none;
+}
+
+.popup__additionalInfo:hover {
+    opacity: 0.6;
+    transition: 0.3s;
 }

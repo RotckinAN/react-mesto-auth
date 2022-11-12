@@ -16,7 +16,7 @@ function PopupWithForm({name, isOpen, onClose, onSubmit, additionalClassName, ti
                     <form onSubmit={onSubmit} name={`${name}Form`} className={`popup__content popup__content_type_${name}`} noValidate={true}>
                         <h2 className={`popup__content-title ${additionalClassName}`}>{title}</h2>
                         {children}
-                        <button type="submit" value={buttonText} className={buttonClassName} id="save-button" disabled={!isFormValid}>{buttonText}</button>
+                        <button type="submit" value={buttonText} className={buttonClassName} id={`${name}-saveButton`} disabled={!isFormValid}>{buttonText}</button>
                     </form>
                 </div>
             </div>
