@@ -1,9 +1,9 @@
-import React from "react";
+import {useState} from "react";
 
 function useValidation() {
-    const [isDirty, setIsDirty] = React.useState(false);
-    const [inputError, setInputError] = React.useState('');
-    const [inputValid, setInputValid] = React.useState(false);
+    const [isDirty, setIsDirty] = useState(true);
+    const [inputError, setInputError] = useState('');
+    const [inputValid, setInputValid] = useState(false);
 
     function validation(value) {
         if (!value.validity.valid) {

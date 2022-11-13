@@ -1,16 +1,16 @@
 import PopupWithForm from "./PopupWithForm";
-import React from "react";
+import {useEffect, useRef, useState} from "react";
 import useInput from "../hooks/useInput";
 
 function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
-    const inputRef = React.useRef();
+    const inputRef = useRef();
     const avatar = useInput();
-    const [formValid, setFormValid] = React.useState(false);
+    const [formValid, setFormValid] = useState(false);
     const avatarInputClassName = (`popup__item popup__item_input_avatarPicture ${avatar.isDirty ? 'popup__item_type_error' : ''}`)
     const avatarMessageErrorClassName = (`popup__input-error inputPictureAvatar-error ${avatar.isDirty ? 'popup__input-error_active' : ''}`);
     const buttonText = isLoading ? 'Сохранение...' : 'Сохранить';
 
-    React.useEffect(() => {
+    useEffect(() => {
         inputRef.current.value = "";
         avatar.setIsDirty(false);
         avatar.setInputError('');
@@ -18,7 +18,7 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
         setFormValid(false);
     }, [isOpen]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (avatar.inputValid) {
             setFormValid(true)
         } else {

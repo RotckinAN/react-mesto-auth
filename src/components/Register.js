@@ -1,4 +1,3 @@
-import React from "react";
 import AuthorizationUserForm from "./AuthorizationUserForm";
 import Header from "./Header";
 import {useHistory} from "react-router-dom";

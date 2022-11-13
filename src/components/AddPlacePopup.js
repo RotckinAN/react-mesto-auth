@@ -1,18 +1,18 @@
 import PopupWithForm from "./PopupWithForm";
-import React from "react";
+import {useEffect, useState} from "react";
 import useInput from "../hooks/useInput";
 
 function AddPlacePopup({isOpen, onClose, onAddPlaceSubmit, isLoading}) {
   const name = useInput();
   const link = useInput();
-  const [formValid, setFormValid] = React.useState(false);
+  const [formValid, setFormValid] = useState(false);
   const inputNameClassName = (`popup__item popup__item_input_pictureName ${name.isDirty ? 'popup__item_type_error' : ''}`);
   const inputLinkClassName = (`popup__item popup__item_input_picture ${link.isDirty ? 'popup__item_type_error' : ''}`);
   const inputNameMessageErrorClassName = (`popup__input-error inputPicturePopup-error ${name.isDirty ? 'popup__input-error_active' : ''}`);
   const inputLinkMessageErrorClassName = (`popup__input-error inputPictureLink-error ${link.isDirty ? 'popup__input-error_active' : ''}`);
   const buttonText = isLoading ? 'Создание...' : 'Создать';
 
-    React.useEffect(() => {
+    useEffect(() => {
         name.setValue('');
         link.setValue('');
         name.setIsDirty(false);
@@ -24,7 +24,7 @@ function AddPlacePopup({isOpen, onClose, onAddPlaceSubmit, isLoading}) {
         setFormValid(false)
     }, [isOpen])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (name.inputValid && link.inputValid) {
             setFormValid(true)
         } else {

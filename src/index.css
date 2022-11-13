@@ -56,8 +56,7 @@
 @import url(./blocks/popup/__title/popup__title.css);
 @import url(./blocks/popup/__close/popup__close.css);
 @import url(./blocks/popup/__content/popup__content.css);
-@import url(blocks/popup/__content/_type/popup__content_type_successLogin.css);
-@import url(blocks/popup/__content/_type/popup__content_type_successRegister.css);
+@import url(blocks/popup/__content/_type/popup__content_type_infoTooltip.css);
 @import url(./blocks/popup/__content-title/popup__content-title.css);
 @import url(./blocks/popup/__content-title/_type/popup__content-title_type_confirmDelete.css);
 @import url(./blocks/popup/__content-title/_type/popup__content-title_type_avatarCreate.css);
@@ -71,6 +70,7 @@
 @import url(./blocks/popup/__save-button/popup__save-button.css);
 @import url(./blocks/popup/__save-button/_type/popup__save-button_type_userForm.css);
 @import url(./blocks/popup/__save-button/_invalid/popup__save-button_invalid.css);
+@import url(./blocks/popup/__save-button/_invalid/popup__save-button_type_invalidUserForm.css);
 @import url(./blocks/popup/__input-error/_active/popup__input-error_active.css);
 @import url(./blocks/popup/__additionalInfo/popup__additionalInfo.css);
 @import url(./blocks/popup/__additionalInfo/_type/popup__additionalInfo_type_hidden.css);

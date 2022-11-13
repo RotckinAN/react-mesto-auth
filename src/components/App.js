@@ -1,4 +1,4 @@
-import React from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import Main from "./Main";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
@@ -16,98 +16,113 @@ import ProtectedRoute from "./ProtectedRoute";
 import * as auth from "../utils/mestoAuth";
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-    const [isLoadingPage, setIsLoadingPage] = React.useState(true);
-    const [userData, setUserData] = React.useState({});
-    const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
-    const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-    const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-    const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = React.useState(false);
-    const [isLoginInfoTooltipOpen, setIsLoginInfoTooltipOpen] = React.useState(false);
-    const [isRegisterInfoTooltipOpen, setIsRegisterInfoTooltipOpen] = React.useState(false);
-    const [selectedCard, setIsSelectedCard] = React.useState ({src: '#', alt: '#', state: false});
-    const [currentUser, setCurrentUser] = React.useState({});
-    const [cards, setCards] = React.useState([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoadingPage, setIsLoadingPage] = useState(true);
+    const [userData, setUserData] = useState({});
+    const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
+    const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+    const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+    const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
+    const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+    const [infoTooltipText, setInfoTooltipText] = useState('');
+    const [selectedCard, setIsSelectedCard] = useState ({src: '#', alt: '#', state: false});
+    const [currentUser, setCurrentUser] = useState({});
+    const [cards, setCards] = useState([]);
     const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isConfirmationPopupOpen || selectedCard.state;
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [actualCard, setActualCard] = React.useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [actualCard, setActualCard] = useState({});
     let history = useHistory();
 
-    const userRegister = React.useCallback(async (registrationData) => {
-        handleRegisterInfoTooltipOpen(true);
-        const res = await auth.register(registrationData);
-        if(res.statusCode !== 400) {
-                setUserData(res.data)
+    const userRegister = useCallback(async (registrationData) => {
+        try {
+            const res = await auth.register(registrationData);
+            if(res.statusCode !== 400) {
+                setUserData(res.data);
+                setIsLoggedIn(true);
+                setInfoTooltipText('Вы успешно зарегистрировались!');
+                handleRegisterInfoTooltipOpen(true);
+                history.push('/sign-in');
             }
+            } catch {
+                setInfoTooltipText('Что-то пошло не так!\n' + 'Попробуйте ещё раз.')
+                handleRegisterInfoTooltipOpen(true);
+                throw new Error('Invalid credentials');
+        }
     }, [])
 
-    const userLogin = React.useCallback(async (registrationData) => {
+    const userLogin = useCallback(async (registrationData) => {
         try {
             const data = await auth.authorize(registrationData);
-            handleLoginInfoTooltipOpen(true);
             if (!data.token) {
-                throw new Error('Invalid credentials')
+                throw new Error('Invalid credentials');
             }
             if (data.token) {
                 localStorage.setItem('jwt', data.token);
                 setIsLoggedIn(true);
+                setUserData(registrationData.email);
+                setInfoTooltipText('Добро пожаловать!');
+                handleLoginInfoTooltipOpen(true);
             }
+        } catch {
+            setInfoTooltipText('Что-то пошло не так!\n' + 'Попробуйте ещё раз.')
+            handleLoginInfoTooltipOpen(true);
+            throw new Error('Invalid credentials');
         } finally {
             setIsLoadingPage(false)
         }
     }, []);
 
-    const userLogout = React.useCallback(() => {
+    const userLogout = useCallback(() => {
         setIsLoggedIn(false);
         localStorage.removeItem('jwt');
     }, [])
 
-    const handleTokenCheck = React.useCallback(async () => {
-        try {
+    const handleTokenCheck = useCallback(async () => {
+        if (localStorage.getItem('jwt')) {
             const jwt = localStorage.getItem('jwt');
             if (!jwt) {
                 throw new Error('No token in storage');
             }
 
             const resUser = await auth.checkToken(jwt)
-            // console.log(resUser)
-            if (!resUser.data) {
+            if (!resUser) {
                 throw new Error('Invalid user')
             }
-           if (resUser.data) {
-               // console.log(resUser.data)
-               setUserData(resUser.data);
-               setIsLoggedIn(true);
-           }
-        } catch {}
-        finally {
-            setIsLoadingPage(false);
+            if (resUser.data) {
+                setUserData(resUser.data);
+                setIsLoggedIn(true);
+            }
         }
+        setIsLoadingPage(false);
     }, [localStorage.getItem('jwt')]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         handleTokenCheck()
             .catch((err) => {
             console.error(err)})
     }, [handleTokenCheck])
 
-    React.useEffect(() => {
-        api.getUserInfoByRequest()
-            .then((res) => {
-                setCurrentUser(res);
-            })
-            .catch((err) => {
-            console.error(err)
-        });
-    }, []);
+    useEffect(() => {
+        if (isLoggedIn) {
+            api.getUserInfoByRequest()
+                .then((res) => {
+                    setCurrentUser(res);
+                })
+                .catch((err) => {
+                    console.error(err)
+                });
+        }
+    }, [isLoggedIn]);
 
-    React.useEffect(() => {
-        api.getInitialCards()
-            .then(setCards)
-            .catch((err) => {
-                console.error(err)
-            });
-    }, []);
+    useEffect(() => {
+        if (isLoggedIn) {
+            api.getInitialCards()
+                .then(setCards)
+                .catch((err) => {
+                    console.error(err)
+                });
+        }
+    }, [isLoggedIn]);
 
     function handleEditProfileClick() {
         setIsEditProfilePopupOpen(true)
@@ -127,11 +142,11 @@ function App() {
     }
 
     function handleLoginInfoTooltipOpen() {
-        setIsLoginInfoTooltipOpen(true)
+        setIsInfoTooltipOpen(true);
     }
 
     function handleRegisterInfoTooltipOpen() {
-        setIsRegisterInfoTooltipOpen(true)
+        setIsInfoTooltipOpen(true);
     }
 
     function handleCardLike(card) {
@@ -169,11 +184,10 @@ function App() {
         setIsEditAvatarPopupOpen(false);
         setIsConfirmationPopupOpen(false);
         setIsSelectedCard({src: '#', alt: '#', state: false});
-        setIsLoginInfoTooltipOpen(false);
-        setIsRegisterInfoTooltipOpen(false);
+        setIsInfoTooltipOpen(false);
     }
 
-  React.useEffect(() => {
+  useEffect(() => {
       function closeByEsc(evt) {
           if (evt.key === 'Escape') {
               closeAllPopups()
@@ -266,8 +280,7 @@ function App() {
                 </Switch>
                 <Footer />
 
-                <InfoTooltip loggedIn={isLoggedIn} name='successRegister' isOpen={isRegisterInfoTooltipOpen} infoText='Вы успешно зарегистрировались!' onClose={closeAllPopups} />
-                <InfoTooltip loggedIn={isLoggedIn} name='successLogin' isOpen={isLoginInfoTooltipOpen} infoText='Добро пожаловать!' onClose={closeAllPopups} />
+                <InfoTooltip loggedIn={isLoggedIn} name='infoTooltip' isOpen={isInfoTooltipOpen} infoText={infoTooltipText} onClose={closeAllPopups} />
                 <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isLoading={isLoading} />
                 <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlaceSubmit={handleAddPlaceSubmit} isLoading={isLoading} />
                 <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} isLoading={isLoading} />

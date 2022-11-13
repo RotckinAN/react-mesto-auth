@@ -1,10 +1,10 @@
-import React from "react";
+import {useContext} from "react";
 import Card from "./Card";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 import Header from "./Header";
 
 function Main({onEditAvatar, onEditProfile, onAddPlace, onCardClick, cards, onCardLike, onDeleteButtonClick, userData, logout, loggedIn}) {
-    const userContext = React.useContext(CurrentUserContext);
+    const userContext = useContext(CurrentUserContext);
 
     return (
         <>

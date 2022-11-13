@@ -1,5 +1,4 @@
 import PopupWithForm from "./PopupWithForm";
-import React from "react";
 
 function ConfirmationPopup({isLoading, onClose, actualCard, onCardDelete, isOpen}) {
     const buttonText = isLoading ? 'Удаление...' : 'Да';

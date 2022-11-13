@@ -1,8 +1,8 @@
-import React from "react";
+import {useState} from "react";
 import useValidation from "./useValidation";
 
 function useInput() {
-    const [value, setValue] = React.useState('');
+    const [value, setValue] = useState('');
     const {isDirty, inputError, inputValid, validation, setIsDirty, setInputValid, setInputError} = useValidation();
 
     const handleChange = (evt) => {

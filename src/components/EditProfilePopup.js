@@ -1,20 +1,20 @@
 import PopupWithForm from "./PopupWithForm";
-import React from "react";
+import {useContext, useEffect, useState} from "react";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 import useInput from "../hooks/useInput";
 
 function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
     const name = useInput()
     const description = useInput();
-    const [formValid, setFormValid] = React.useState(false);
-    const currentUser = React.useContext(CurrentUserContext);
+    const [formValid, setFormValid] = useState(false);
+    const currentUser = useContext(CurrentUserContext);
     const inputNameClassName = (`popup__item popup__item_input_name ${name.isDirty ? 'popup__item_type_error' : ''}`);
     const inputDescriptionClassName = (`popup__item popup__item_input_job ${description.isDirty ? 'popup__item_type_error' : ''}`);
     const inputNameMessageErrorClassName = (`popup__input-error inputName-error ${name.isDirty ? 'popup__input-error_active' : ''}`);
     const inputDescriptionMessageErrorClassName = (`popup__input-error inputJob-error ${description.isDirty ? 'popup__input-error_active' : ''}`);
     const buttonText = isLoading ? 'Сохранение...' : 'Сохранить';
 
-    React.useEffect(() => {
+    useEffect(() => {
         name.setValue(currentUser.name);
         description.setValue(currentUser.about);
         name.setIsDirty(false);
@@ -26,7 +26,7 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
         setFormValid(true)
     }, [currentUser, isOpen]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (name.inputValid && description.inputValid) {
             setFormValid(true)
         } else {

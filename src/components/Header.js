@@ -1,7 +1,7 @@
-import React from 'react';
+import {useState} from 'react';
 
 function Header({loginText, buttonText, additionalClassName, buttonPath, loggedIn}) {
-    const [isHiddenContainerOpen, setIsHiddenContainerOpen] = React.useState(false);
+    const [isHiddenContainerOpen, setIsHiddenContainerOpen] = useState(false);
         const hiddenContainerClassName = (`header__hiddenContainer ${isHiddenContainerOpen ? 'header__hiddenContainer_active' : ''}`);
         const mobileVersionButtonClassName = (`header__mobileVersionButton ${isHiddenContainerOpen ? 'header__mobileVersionButton_active' : ''} ${!loggedIn ? 'header__mobileVersionButton_inactive' : ''}`);
         const loginButtonClassName = (`header__loginButton ${additionalClassName} ${!loggedIn ? 'header__loginButton_visibly' : ''}`)

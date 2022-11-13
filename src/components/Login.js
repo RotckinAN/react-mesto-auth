@@ -1,10 +1,9 @@
 import AuthorizationUserForm from "./AuthorizationUserForm";
 import Header from "./Header";
-import React from "react";
 import {useHistory} from "react-router-dom";
 
 function Login({onLogin, isLoggedIn}) {
-    let history = useHistory();
+    const history = useHistory();
 
     return (
         <>
